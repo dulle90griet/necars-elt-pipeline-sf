@@ -77,3 +77,6 @@ select count(*)
 from reconditioning_cost
 where description = 'BUYERS FEE';
 
+select net_cost_price, profit
+from reconditioning_cost
+where net_cost_price != profit * -1;
