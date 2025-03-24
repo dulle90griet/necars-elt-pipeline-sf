@@ -4,10 +4,12 @@ import snowflake.snowpark.types as T
 import snowflake.snowpark.functions as F
 from snowflake.snowpark import Window
 
-def register_udf_split_description():
+def register_udf_split_descriptions():
     # dbt python models in Snowpark don't allow for named UDFs,
     # so we need to define a helper function to invoke in a lambda
     def description_splitter(description: str) -> list:
+        stock_id, description = int(description[:5]), description[5:]
+
         door_search = re.search(r"\b(\d)dr\b", description.lower())
         door_start, door_end = door_search.span()
 
@@ -27,32 +29,38 @@ def register_udf_split_description():
             transmission_type = description[door_end:].strip()
             fuel_type = None
             
-        return [vehicle_model, door_count, transmission_type, fuel_type]
+        return [stock_id, vehicle_model, door_count, transmission_type, fuel_type]
 
-    # the anonymous UDF, with lambda call
-    split_description = F.udf(
+    # The anonymous UDF, with lambda call
+    split_descriptions = F.udf(
         lambda x: description_splitter(x),
         input_types=[T.StringType()],
         return_type=T.ArrayType()
     )
 
-    return split_description
+    return split_descriptions
 
 def model(dbt, session):
     dbt.config(
-        materialized = "table"
+        materialized = "table",
+        packages = ["modin"]
     )
 
     int_vehicle_df = dbt.ref("int_vehicle")
-
-    split_description = register_udf_split_description()
     
-    # using our UDF, generate a Snowpark Column in which each value is a list
-    # of description elements
-    description_lists = split_description(int_vehicle_df["vehicle_description"])
+    split_descriptions = register_udf_split_descriptions()
+    
+    # Using our UDF, generate a Snowpark Column in which each value is a 
+    # list of description elements. Snowpark makes joins on row numbers
+    # unworkable, so pass in the stock_id with the description.
+    descriptions_to_split = F.concat(
+        int_vehicle_df.stock_id,
+        int_vehicle_df.vehicle_description
+    )
+    description_lists = split_descriptions(descriptions_to_split)
 
-    # explode those elements into separate columns in a Snowpark DF
-    columns = ["model", "door_count", "transmission_type", "fuel_type"]
+    # Explode those elements into separate columns in a Snowpark DF
+    columns = ["stock_id", "model", "door_count", "transmission_type", "fuel_type"]
     description_cols_df = int_vehicle_df \
         .withColumn("description_lists_col", description_lists) \
         .select(
@@ -60,30 +68,15 @@ def model(dbt, session):
               for i in range(len(columns))]
         ).replace("", None)
 
-    # join these columns to the int_vehicle DF and generate dim_vehicle
-    # first, add row numbers - in Snowpark this requires assignment over a window
-    # we don't want to change the order, so we use a constant ordering key
-    window_spec = Window.orderBy(F.lit(1))
-    int_vehicle_df = int_vehicle_df.with_column(
-        "row_no",
-        F.row_number().over(window_spec)
-    )
-    description_cols_df = description_cols_df.with_column(
-        "row_no",
-        F.row_number().over(window_spec)
-    )
-    # make the join and generate the dim_vehicle DF
-    dim_vehicle_df = int_vehicle_df.join(
-        description_cols_df,
-        int_vehicle_df.col("row_no") == description_cols_df.col("row_no")
-    )[[
-        "stock_id",
-        "stock_type",
-        "make",
-        "model",
-        "door_count",
-        "transmission_type",
-        "fuel_type"
-    ]]       
-    
+    # Join these columns to the int_vehicle DF and generate dim_vehicle
+    dim_vehicle_df = int_vehicle_df.join(description_cols_df, on="stock_id") \
+        [[
+            "stock_id",
+            "stock_type",
+            "make",
+            "model",
+            "door_count",
+            "transmission_type",
+            "fuel_type"
+        ]]
     return dim_vehicle_df
