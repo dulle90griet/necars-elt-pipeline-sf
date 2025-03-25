@@ -6,7 +6,7 @@ from snowflake.snowpark import Window
 
 def register_udf_split_descriptions():
     # dbt python models in Snowpark don't allow for named UDFs,
-    # so we need to define a helper function to invoke in a lambda
+    # so we need to define a helper function which will be invoked by a lambda
     def description_splitter(description: str) -> list:
         stock_id, description = int(description[:5]), description[5:]
 
@@ -50,13 +50,14 @@ def model(dbt, session):
     
     split_descriptions = register_udf_split_descriptions()
     
-    # Using our UDF, generate a Snowpark Column in which each value is a 
-    # list of description elements. Snowpark makes joins on row numbers
-    # unworkable, so pass in the stock_id with the description.
+    # Snowpark makes joins on row numbers unworkable, so we first
+    # need to prepend the stock_id to each description string
     descriptions_to_split = F.concat(
         int_vehicle_df.stock_id,
         int_vehicle_df.vehicle_description
     )
+    # Using our UDF, generate a Snowpark Column in which each value 
+    # is a list of description elements
     description_lists = split_descriptions(descriptions_to_split)
 
     # Explode those elements into separate columns in a Snowpark DF
