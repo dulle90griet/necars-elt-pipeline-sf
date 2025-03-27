@@ -42,8 +42,7 @@ def register_udf_split_descriptions():
 
 def model(dbt, session):
     dbt.config(
-        materialized = "table",
-        packages = ["modin"]
+        materialized = "table"
     )
 
     int_vehicle_df = dbt.ref("int_vehicle")
