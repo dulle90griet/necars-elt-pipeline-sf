@@ -1,7 +1,7 @@
 select
     -- Generate supplier_ids in order of first appearance
     row_number() over (order by first_appearance) as supplier_id,
-    supplier
+    supplier as supplier_name
 from (
     with
         s as (
