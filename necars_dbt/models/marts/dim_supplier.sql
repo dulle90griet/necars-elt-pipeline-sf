@@ -1,7 +1,7 @@
 select
     -- Generate supplier_ids in order of first appearance
-    row_number() over (order by first_appearance) as supplier_id,
-    supplier as supplier_name
+    row_number() over (order by first_appearance) as supplier_id
+    ,supplier as supplier_name
 from (
     with
         s as (
@@ -20,9 +20,9 @@ from (
                 row_number() over(
                     partition by recondition_supplier
                     order by date
-                ) as appearance,
-                date as recondition_date,
-                recondition_supplier
+                ) as appearance
+                ,date as recondition_date
+                ,recondition_supplier
             from
                 stg_source_cost
             qualify
@@ -34,9 +34,9 @@ from (
                 row_number() over(
                     partition by vehicle_supplier
                     order by purchase_invoice_date
-                ) as appearance,
-                purchase_invoice_date as purchase_date,
-                vehicle_supplier
+                ) as appearance
+                ,purchase_invoice_date as purchase_date
+                ,vehicle_supplier
             from
                 stg_source_vehicle
             qualify
@@ -49,8 +49,8 @@ from (
               or purchase_date is null
               then recondition_date
             else purchase_date
-        end as first_appearance,
-        supplier
+        end as first_appearance
+        ,supplier
     from s
     left join c
       on recondition_supplier = supplier

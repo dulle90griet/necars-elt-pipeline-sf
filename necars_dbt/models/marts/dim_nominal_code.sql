@@ -8,8 +8,8 @@ with
     order by nominal_code
   )
 select
-  nominal_code as code_id,
-  case code_id
+  nominal_code as code_id
+  ,case code_id
     when 5210 then 'Labour'
     when 5300 then 'Margin Scheme Vehicle'
     when 5301 then 'Buyer''s Fee'
