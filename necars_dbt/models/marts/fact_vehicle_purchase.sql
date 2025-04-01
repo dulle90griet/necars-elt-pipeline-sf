@@ -9,8 +9,8 @@ select
   ,s_v.part_ex
   ,date(s_v.in_stock_date, 'dd/mm/yyyy') as in_stock_date
 from
-  stg_source_vehicle as s_v
+  {{ ref('stg_source_vehicle') }} as s_v
 join
-  dim_supplier as d_s
+  {{ ref('dim_supplier') }} as d_s
 on
   s_v.vehicle_supplier = d_s.supplier_name

@@ -7,11 +7,11 @@ from (
         s as (
             -- Get all distinct suppliers from the source tables
                 select recondition_supplier as supplier
-                from stg_source_cost
+                from {{ ref('stg_source_cost') }}
                 where supplier is not null
             union
                 select vehicle_supplier
-                from stg_source_vehicle
+                from {{ ref('stg_source_vehicle') }}
                 where vehicle_supplier is not null
         ),
         c as (
@@ -24,7 +24,7 @@ from (
                 ,date as recondition_date
                 ,recondition_supplier
             from
-                stg_source_cost
+                {{ ref('stg_source_cost') }}
             qualify
                 appearance = 1
         ),
@@ -38,7 +38,7 @@ from (
                 ,purchase_invoice_date as purchase_date
                 ,vehicle_supplier
             from
-                stg_source_vehicle
+                {{ ref('stg_source_vehicle') }}
             qualify
                 appearance = 1
         )

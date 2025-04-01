@@ -1,10 +1,10 @@
 with
   distinct_codes as (
       select nominal_code
-      from stg_source_cost
+      from {{ ref('stg_source_cost') }}
     union
       select nominal_purchase_code
-      from stg_source_vehicle
+      from {{ ref('stg_source_vehicle') }}
     order by nominal_code
   )
 select

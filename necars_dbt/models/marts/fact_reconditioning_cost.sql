@@ -16,10 +16,10 @@ select
   ,s_c.net_extra_price
   ,s_c.profit
 from
-  stg_source_cost as s_c
+  {{ ref('stg_source_cost') }} as s_c
 join
-  dim_supplier as d_s
+  {{ ref('dim_supplier') }} as d_s
   on s_c.recondition_supplier = d_s.supplier_name
 join
-  dim_nominal_code as d_n
+  {{ ref('dim_nominal_code') }} as d_n
   on s_c.nominal_code = d_n.code_id
