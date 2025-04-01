@@ -1,0 +1,25 @@
+version: 2
+
+sources:
+  - name: necars_source
+    database: necars_source_db
+    schema: source_schema
+    tables:
+      - name: vehicle_purchase
+        columns:
+          - name: full_stock_number
+            tests:
+              - unique
+              - not_null
+      - name: reconditioning_cost
+        columns:
+          - name: stock_number
+            tests:
+              - not_null
+          - name: sage_ref
+            tests:
+              - unique
+              - not_null
+        #       - relationships:
+        #           to: source('necars_source', 'vehicle_purchase')
+        #           field: "SUBSTRING(full_stock_number, 2)"
