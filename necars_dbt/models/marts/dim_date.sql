@@ -53,6 +53,10 @@ select
   ) as month_name
   -- year
   ,cast(year(date_id) as int) as year
+  -- quarter_id
+  ,cast(year(date_id)||right('0'||quarter(date_id), 2) as int) as quarter_id
+  -- quarter_of_year
+  ,cast(quarter(date_id) as int) as quarter_of_year
   -- tax_year
   ,case
     when month_of_year < 4
@@ -60,8 +64,4 @@ select
       then cast((year - 1)||'-'||year as varchar(9))
     else cast(year||'-'||(year + 1) as varchar(9))
   end as tax_year
-  -- quarter_id
-  ,cast(year(date_id)||right('0'||quarter(date_id), 2) as int) as quarter_id
-  -- quarter_of_year
-  ,cast(quarter(date_id) as int) as quarter_of_year
 from date_spine
