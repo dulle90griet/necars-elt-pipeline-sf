@@ -3,45 +3,6 @@ select
     row_number() over (order by first_appearance) as supplier_id
     ,supplier as supplier_name
 from (
-    with
-        s as (
-            -- Get all distinct suppliers from the source tables
-                select recondition_supplier as supplier
-                from {{ ref('stg_source_cost') }}
-                where supplier is not null
-            union
-                select vehicle_supplier
-                from {{ ref('stg_source_vehicle') }}
-                where vehicle_supplier is not null
-        ),
-        c as (
-            -- Get each supplier's first appearance in the cost table
-            select
-                row_number() over(
-                    partition by recondition_supplier
-                    order by date
-                ) as appearance
-                ,date as recondition_date
-                ,recondition_supplier
-            from
-                {{ ref('stg_source_cost') }}
-            qualify
-                appearance = 1
-        ),
-        v as (
-            -- Get each supplier's first appearance in the vehicle table
-            select
-                row_number() over(
-                    partition by vehicle_supplier
-                    order by purchase_invoice_date
-                ) as appearance
-                ,purchase_invoice_date as purchase_date
-                ,vehicle_supplier
-            from
-                {{ ref('stg_source_vehicle') }}
-            qualify
-                appearance = 1
-        )
     select
         -- Retain the suppliers with their earliest appearances
         case
@@ -51,9 +12,9 @@ from (
             else purchase_date
         end as first_appearance
         ,supplier
-    from s
-    left join c
+    from {{ ref('int_distinct_supplier') }} as s
+    left join {{ ref('int_supplier_first_appearance_cost') }} as c
       on recondition_supplier = supplier
-    left join v
+    left join {{ ref('int_supplier_first_appearance_vehicle') }} as v
       on vehicle_supplier = supplier
 ) supplier_appearance
