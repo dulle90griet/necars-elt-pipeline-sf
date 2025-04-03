@@ -40,3 +40,10 @@ Nominal codes are removed to a dimension table, while a `description` column is 
 
 Dates are denormalized into a classic date dimension table allowing query by month name, quarter, etc.
 
+## 🌬️❄️ Orchestration
+
+dbt enables clear, easy modularisation and referencing, allowing intermediate stages in the data transformation process to be broken down into individual models with a definite order of execution. The resulting DAG is then orchestrated and automated using Airflow, with execution in the project's Snowflake warehouse.
+
+<p align="center"><img src="docs/images/NECars_Airflow_graph.png" alt="dbt DAG in Airflow" title="dbt DAG in Airflow" /></p>
+
+<p align="center"><img src="./docs/images/NECars_Snowflake.png" alt="Snowflake Databases view" title="Snowflake Databases view" /></p>
