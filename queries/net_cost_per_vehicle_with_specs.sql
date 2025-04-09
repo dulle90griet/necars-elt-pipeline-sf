@@ -1,5 +1,5 @@
--- max, min, avg and median will be calculated by Superset
--- using this query
+-- allows for Superset aggregation of per-vehicle costs
+-- on the basis of make, model and other specs
 with
   total_net_per_vehicle as (
     select
