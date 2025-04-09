@@ -1,3 +1,5 @@
+-- Drills across the two fact tables to allow comparison
+-- of net costs on the basis of original purchase type
 with
   f_c as (
     select
