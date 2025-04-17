@@ -14,6 +14,7 @@ Stack:
 - **dbt (data build tool)** for data transformation
 - **Snowflake** as the data platform
 - **Apache Airflow** for orchestration
+- **Apache Superset** for dashboarding
 
 ## 🗃️ Source Data
 
@@ -47,3 +48,9 @@ dbt enables clear, easy modularisation and referencing, allowing intermediate st
 <p align="center"><img src="docs/images/NECars_Airflow_graph.png" alt="dbt DAG in Airflow" title="dbt DAG in Airflow" /></p>
 
 <p align="center"><img src="./docs/images/NECars_Snowflake.png" alt="Snowflake Databases view" title="Snowflake Databases view" /></p>
+
+## 📈 Dashboard
+
+An Apache Superset dashboard is connected to the Snowflake warehouse using Snowflake SQLAlchemy. Charts provide clear, intuitive visualizations of the results of complex queries, allowing reconditioning costs to filtered by category, tracked over time, or even grouped by vehicle stock ID and further analyzed in terms of their relationship to vehicle manufacturer, model, etc. Drilling across fact tables allows further analysis in terms of vehicles' original suppliers or original circumstances of purchase.
+
+<p align="center"><img src="./docs/images/NECars_Superset_dashboard.png" alt="Superset dashboard" title="Superset dashboard" /></p>
