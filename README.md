@@ -51,6 +51,6 @@ dbt enables clear, easy modularisation and referencing, allowing intermediate st
 
 ## 📈 Dashboard
 
-An Apache Superset dashboard is connected to the Snowflake warehouse using Snowflake SQLAlchemy. Charts provide clear, intuitive visualizations of the results of complex queries, allowing reconditioning costs to filtered by category, tracked over time, or even grouped by vehicle stock ID and further analyzed in terms of their relationship to vehicle manufacturer, model, etc. Drilling across fact tables allows further analysis in terms of vehicles' original suppliers or original circumstances of purchase.
+An Apache Superset dashboard is connected to the Snowflake warehouse using Snowflake SQLAlchemy. The dashboard's charts provide clear, intuitive visualizations of the results of complex queries, allowing reconditioning costs to filtered by category, tracked over time, or even grouped by vehicle stock ID and further analyzed in terms of their relationship to vehicle manufacturer, model, etc. Drilling across fact tables allows further analysis in terms of vehicles' original suppliers or original circumstances of purchase.
 
 <p align="center"><img src="./docs/images/NECars_Superset_dashboard.png" alt="Superset dashboard" title="Superset dashboard" /></p>
