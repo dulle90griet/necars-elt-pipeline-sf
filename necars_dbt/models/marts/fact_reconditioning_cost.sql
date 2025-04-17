@@ -6,7 +6,7 @@ select
   ,time(to_timestamp(s_c.date, 'dd/mm/yyyy hh24:mi')) as payment_time
   ,s_c.nominal_code
   ,case
-    when s_c.nominal_code in (5302, 5303)
+    when s_c.nominal_code in (5302, 5303, 5305)
       then s_c.recondition_description
   end as description
   ,s_c.quantity
