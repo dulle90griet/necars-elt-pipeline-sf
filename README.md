@@ -2,6 +2,8 @@
 
 An ELT pipeline using dbt, Snowflake and Apache Airflow, for a local used car dealership.
 
+Migration of this pipeline from Snowflake to AWS Redshift is currently underway [here](https://github.com/dulle90griet/necars-elt-pipeline-rs).
+
 ## 🌐 Overview
 
 NE Cars (name changed) is a car dealership based in the North of England. They buy nearly new used cars at auction and recondition them for sale at a profit, as well as paying for repairs on warranties down the line.
